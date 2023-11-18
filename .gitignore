@@ -12,6 +12,7 @@ target/
 /repository
 .mvn/
 .DS_Store
+/sh/
 
 ### STS ###
 .apt_generated

@@ -1,21 +1,65 @@
-type Author {
+type User {
     id: ID!
-    name: String!
+    nom: String!
+    prenom: String!
+    email: String!
+    poste: String!
 }
 
-type Book {
+type Article {
     id: ID!
-    title: String!
-    author: Author!
+    nom: String!
+    prix: Float!
+    stock: Int!
+    stockPrev: Int!
+}
+
+type Boutique {
+	id: ID!
+	localisation: String!
+	idRef: Int!
+	articles: [Article!]!
+}
+
+type Commande {
+	id: ID!
+	articles: [ArticleMap!]!
+	coutTotal: Float!
+	type: Boolean!
+	idBoutique: Int!
+	status: String!
+}
+
+type ArticleMap {
+	id: Int!
+	stock: Int!
+}
+
+type StockBoutique {
+	idBoutique: Int!
+	idArticle: Int!
+	quantite: Int!
+}
+
+type Production {
+	idArticle: Int!
+	productionJour: Int!
 }
 
 type Query {
-    getAllBooks: [Book!]!
-    getBookById(id: ID!): Book
+    getAllUsers: [User]
+    getUserById(id: ID!): User
+    getUserByEmail(email: String!): User
+    getAllCommandes: [Commande]
+    getAllCommandesById(idCommande: Int!): Commande
+    getAllBoutiques: [Boutique]
+    getAllStockByBoutique(idBoutique: Int!): [StockBoutique]
+    getAllProduction: [Production]
 }
 
 type Mutation {
-    createBook(title: String!, authorId: ID!): Book
-    updateBook(id: ID!, title: String!): Book
-    deleteBook(id: ID!): Boolean
+    createUser(nom: String!, prenon: String!, email: String!, poste: String!): User
+    updateStock(stock: Int!, title: String!): Article
+    udpateStockPrev(stock: Int!): Article
 }
+
