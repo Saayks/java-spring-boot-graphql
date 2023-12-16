@@ -2,8 +2,6 @@ package com.example.graphql;
 
 import com.example.graphql.entities.Article;
 import com.example.graphql.entities.ArticleMap;
-import com.example.graphql.entities.Author;
-import com.example.graphql.entities.Book;
 import com.example.graphql.entities.Boutique;
 import com.example.graphql.entities.Commande;
 import com.example.graphql.entities.Production;
