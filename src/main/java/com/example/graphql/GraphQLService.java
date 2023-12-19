@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
 
 @Service
 public class GraphQLService {
@@ -167,9 +168,106 @@ public class GraphQLService {
     public Commande createCommande(Long userId, List<ArticleMap> articles, float coutTot, String type, int idBoutique) {
     	// Create a new order that is going to be instanced
     	Commande newOrder = new Commande(commandeIdCounter.getAndIncrement(), userId, articles, coutTot, type, idBoutique, "En Préparation");
+    	for(ArticleMap articleAChoisir : articles) {
+    		var article = this.getArticle(articleAChoisir.getIdArticle());
+    		//Mise à jour du stock prévisionnel
+    		if(article != null) {
+    			article.setStockPrev(article.getStockPrev() - articleAChoisir.getQuantite());
+    		}
+    	}
     	return newOrder;
     }
     
+    public boolean deleteCommande(Long commandeId) {
+        Optional<Commande> commandeToDelete = commandes.stream()
+                .filter(commande -> commande.getIdCommande() == commandeId)
+                .findFirst();
+
+        if (commandeToDelete.isPresent()) {
+            commandes.remove(commandeToDelete.get());
+            return true;
+        } else {
+            // La commande n'a pas été trouvée
+            return false;
+        }
+    }
+
+    public Commande updateCommande(Long commandeId, String newStatus) {
+        Optional<Commande> commandeToUpdate = commandes.stream()
+                .filter(commande -> commande.getIdCommande() == commandeId)
+                .findFirst();
+
+        if (commandeToUpdate.isPresent()) {
+            Commande updatedCommande = commandeToUpdate.get();
+            updatedCommande.setStatus(newStatus);
+            return updatedCommande;
+        } else {
+            // La commande n'a pas été trouvée
+            return null;
+        }
+    }
+    
+    public Article getArticle(Long articleId) {
+        return articles.stream()
+                .filter(article -> article.getIdArticle() == articleId)
+                .findFirst()
+                .orElse(null);
+    }
+    
+    public List<Commande> getAllCommandesById(Long userId) {
+        return commandes.stream()
+                .filter(commande -> commande.getIdUtilisateur() == userId)
+                .collect(Collectors.toList());
+    }
+    
+    public boolean updateStock(Long articleId, int newStock) {
+        Optional<Article> articleToUpdate = articles.stream()
+                .filter(article -> article.getIdArticle() == articleId)
+                .findFirst();
+
+        if (articleToUpdate.isPresent()) {
+            Article updatedArticle = articleToUpdate.get();
+            updatedArticle.setStock(newStock);
+            return true;
+        } else {
+            // L'article n'a pas été trouvé
+            return false;
+        }
+    }
+    
+    public Article updateStock(Article articleToUpdate, int newStock) {
+		articleToUpdate.setStock(newStock);
+        return articleToUpdate;
+    }
+
+
+    public Article updateStockPrev(Long articleId, int newStockPrev) {
+        Optional<Article> articleToUpdate = articles.stream()
+                .filter(article -> article.getIdArticle() == articleId)
+                .findFirst();
+
+        if (articleToUpdate.isPresent()) {
+            Article updatedArticle = articleToUpdate.get();
+            updatedArticle.setStockPrev(newStockPrev);
+            return updatedArticle;
+        } else {
+            // L'article n'a pas été trouvé
+            return null;
+        }
+    }
+    
+    public StockBoutique getStockBoutique(long boutiqueId) {
+        return stocks.stream()
+                .flatMap(List::stream)
+                .filter(stockBoutique -> stockBoutique.getIdBoutique() == boutiqueId)
+                .findFirst()
+                .orElse(null);
+    }
+
+
+	public Optional<Article> getArticleById(long articleId) {
+        return articles.stream().filter(article -> article.getIdArticle() == articleId).findFirst();
+	}
     
     
 }
