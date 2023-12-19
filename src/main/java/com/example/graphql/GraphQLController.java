@@ -1,12 +1,6 @@
 package com.example.graphql;
 
-import com.example.graphql.entities.Article;
-import com.example.graphql.entities.Boutique;
-import com.example.graphql.entities.Commande;
-import com.example.graphql.entities.Production;
-import com.example.graphql.entities.StockBoutique;
-import com.example.graphql.entities.Utilisateur;
-
+import com.example.graphql.entities.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;

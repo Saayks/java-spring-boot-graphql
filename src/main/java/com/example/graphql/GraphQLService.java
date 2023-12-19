@@ -1,13 +1,6 @@
 package com.example.graphql;
 
-import com.example.graphql.entities.Article;
-import com.example.graphql.entities.ArticleMap;
-import com.example.graphql.entities.Boutique;
-import com.example.graphql.entities.Commande;
-import com.example.graphql.entities.Production;
-import com.example.graphql.entities.StockBoutique;
-import com.example.graphql.entities.Utilisateur;
-
+import com.example.graphql.entities.*;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
