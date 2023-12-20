@@ -1,17 +1,31 @@
 package com.example.graphql.entities;
 
-public class StockBoutique {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
+public class StockBoutique {
+	@Id
+	private long idStockBoutique;
 	private long idBoutique;
 	private long idArticle;
 	private int quantite;
 	
-	public StockBoutique(long idBoutique, long idArticle, int quantite) {
+	public StockBoutique(long idStockBoutique, long idBoutique, long idArticle, int quantite) {
+		this.idStockBoutique = idStockBoutique;
 		this.idBoutique = idBoutique;
 		this.idArticle = idArticle;
 		this.quantite = quantite;
 	}
 	
+	public long getIdStockBoutique() {
+		return idStockBoutique;
+	}
+
+	public void setIdStockBoutique(long idStockBoutique) {
+		this.idStockBoutique = idStockBoutique;
+	}
+
 	public long getIdBoutique() {
 		return idBoutique;
 	}

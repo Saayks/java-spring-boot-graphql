@@ -1,6 +1,9 @@
 package com.example.graphql;
 
 import com.example.graphql.entities.*;
+import com.example.graphql.repositories.*;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -12,20 +15,43 @@ import java.util.stream.Collectors;
 @Service
 public class GraphQLService {
 
+	@Autowired
+    private UtilisateurRepository utilisateurRepository;
+
+    @Autowired
+    private CommandeRepository commandeRepository;
+
+    @Autowired
+    private BoutiqueRepository boutiqueRepository;
+
+    @Autowired
+    private ProductionRepository productionRepository;
+
+    @Autowired
+    private ArticleRepository articleRepository;
+
+    @Autowired
+    private StockBoutiqueRepository stockBoutiqueRepository;
+
+    @Autowired
+    private ArticleMapRepository articleMapRepository;
+    
     private List<Utilisateur> utilisateurs = new ArrayList<>();
     private List<Article> articles = new ArrayList<>();
     private List<Commande> commandes = new ArrayList<>();
     private List<Production> productions = new ArrayList<>();
-    private List<List<StockBoutique>> stocks = new ArrayList<>();
+    private List<StockBoutique> stocks = new ArrayList<>();
     private List<Boutique> boutiques = new ArrayList<>();
     private AtomicLong utilisateurIdCounter = new AtomicLong(1);
     private AtomicLong articleIdCounter = new AtomicLong(1);
     private AtomicLong commandeIdCounter = new AtomicLong(1);
     private AtomicLong productionIdCounter = new AtomicLong(1);
     private AtomicLong boutiqueIdCounter = new AtomicLong(1);
+    private AtomicLong stockBoutiqueIdCounter = new AtomicLong(1);
 
+    
     public GraphQLService() {
-    	Utilisateur user1 = new Utilisateur(utilisateurIdCounter.getAndIncrement(), "Menez", "Pierre", "Responsable Boutique", "pierre.menez@gmail.com");
+    	/* Utilisateur user1 = new Utilisateur(utilisateurIdCounter.getAndIncrement(), "Menez", "Pierre", "Responsable Boutique", "pierre.menez@gmail.com");
     	Utilisateur user2 = new Utilisateur(utilisateurIdCounter.getAndIncrement(), "Henry", "Thierry", "Logisiticien", "thierry.henry@hotmail.fr");
     	Utilisateur user3 = new Utilisateur(utilisateurIdCounter.getAndIncrement(), "Bruel", "Patrick", "Responsable Boutique", "patrick.bruel@yahoo.fr");
     	utilisateurs.add(user1);
@@ -42,9 +68,9 @@ public class GraphQLService {
         List<StockBoutique> stockBoutique1 = new ArrayList<StockBoutique>();
         Boutique boutique1 = new Boutique(boutiqueIdCounter.getAndIncrement(), "153 avenue Montaury, 64600 Anglet", user1.getIdUtilisateur(), stockBoutique1);
         
-        StockBoutique plancheBoutique1 = new StockBoutique(boutique1.getIdBoutique(), article1.getIdArticle(), 4);
-        StockBoutique waxBoutique1 = new StockBoutique(boutique1.getIdBoutique(), article2.getIdArticle(), 10);
-        StockBoutique combiBoutique1 = new StockBoutique(boutique1.getIdBoutique(), article3.getIdArticle(), 0);
+        StockBoutique plancheBoutique1 = new StockBoutique(stockBoutiqueIdCounter.getAndIncrement(), boutique1.getIdBoutique(), article1.getIdArticle(), 4);
+        StockBoutique waxBoutique1 = new StockBoutique(stockBoutiqueIdCounter.getAndIncrement(), boutique1.getIdBoutique(), article2.getIdArticle(), 10);
+        StockBoutique combiBoutique1 = new StockBoutique(stockBoutiqueIdCounter.getAndIncrement(), boutique1.getIdBoutique(), article3.getIdArticle(), 0);
         stockBoutique1.add(plancheBoutique1);
         stockBoutique1.add(waxBoutique1);
         stockBoutique1.add(combiBoutique1);
@@ -52,9 +78,9 @@ public class GraphQLService {
         List<StockBoutique> stockBoutique2 = new ArrayList<StockBoutique>();
         Boutique boutique2 = new Boutique(boutiqueIdCounter.getAndIncrement(), "13 rue du Forail, 64000 Pau", user3.getIdUtilisateur(), stockBoutique2);
         
-        StockBoutique plancheBoutique2 = new StockBoutique(boutique2.getIdBoutique(), article1.getIdArticle(), 2);
-        StockBoutique waxBoutique2 = new StockBoutique(boutique2.getIdBoutique(), article2.getIdArticle(), 5);
-        StockBoutique combiBoutique2 = new StockBoutique(boutique2.getIdBoutique(), article3.getIdArticle(), 10);
+        StockBoutique plancheBoutique2 = new StockBoutique(stockBoutiqueIdCounter.getAndIncrement(), boutique2.getIdBoutique(), article1.getIdArticle(), 2);
+        StockBoutique waxBoutique2 = new StockBoutique(stockBoutiqueIdCounter.getAndIncrement(), boutique2.getIdBoutique(), article2.getIdArticle(), 5);
+        StockBoutique combiBoutique2 = new StockBoutique(stockBoutiqueIdCounter.getAndIncrement(), boutique2.getIdBoutique(), article3.getIdArticle(), 10);
         stockBoutique2.add(plancheBoutique2);
         stockBoutique2.add(waxBoutique2);
         stockBoutique2.add(combiBoutique2);
@@ -67,9 +93,17 @@ public class GraphQLService {
         Production productionCombi = new Production(productionIdCounter.getAndIncrement(), article3.getIdArticle(), 3);
         productions.add(productionPlanche);
         productions.add(productionCombi);
-        productions.add(productionWax);
+        productions.add(productionWax); */
+    	
+    	//Retrieve all data
+    	utilisateurs = utilisateurRepository.findAll();
+    	articles = articleRepository.findAll();
+    	commandes = commandeRepository.findAll();
+    	productions = productionRepository.findAll();
+    	stocks = stockBoutiqueRepository.findAll();
+    	boutiques = boutiqueRepository.findAll();
     }
-
+   
     
     public List<Utilisateur> getAllUtilisateurs() {
         return utilisateurs;
@@ -91,7 +125,7 @@ public class GraphQLService {
     }
     
     
-    public List<List<StockBoutique>> getAllStockBoutiques() {
+    public List<StockBoutique> getAllStockBoutiques() {
         return stocks;
     }
     
@@ -249,12 +283,11 @@ public class GraphQLService {
         }
     }
     
-    public StockBoutique getStockBoutique(long boutiqueId) {
-        return stocks.stream()
-                .flatMap(List::stream)
-                .filter(stockBoutique -> stockBoutique.getIdBoutique() == boutiqueId)
-                .findFirst()
-                .orElse(null);
+    public List<StockBoutique> getStockBoutique(long boutiqueId) {
+       return stocks.stream()
+               .filter(stock -> stock.getIdBoutique() == boutiqueId)
+               .collect(Collectors.toList());
+
     }
 
 
@@ -262,6 +295,14 @@ public class GraphQLService {
         return articles.stream().filter(article -> article.getIdArticle() == articleId).findFirst();
 	}
     
-    
+    public void updateDatabase() {
+    	//Only to update the database
+    	utilisateurs = utilisateurRepository.findAll();
+    	articles = articleRepository.findAll();
+    	commandes = commandeRepository.findAll();
+    	productions = productionRepository.findAll();
+    	stocks = stockBoutiqueRepository.findAll();
+    	boutiques = boutiqueRepository.findAll();
+    }
 }
 

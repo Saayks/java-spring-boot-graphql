@@ -1,16 +1,16 @@
 type Utilisateur {
-    id: ID!
+    idUtilisateur: ID!
     nom: String!
     prenom: String!
+    poste: String!
     email: String!
-    role: String!
 }
 
 type Commande {
     idCommande: ID!
-    userId: ID!
+    idUtilisateur: ID!
     articles: [ArticleMap]!
-    coutTot: Float!
+    coutTotal: Float!
     type: String!
     idBoutique: Int!
     status: String!
@@ -19,14 +19,14 @@ type Commande {
 type Boutique {
     idBoutique: ID!
     adresse: String!
-    userId: ID!
-    stock: [StockBoutique]!
+    responsableBoutique: ID!
+    articles: [StockBoutique]!
 }
 
 type Production {
     idProduction: ID!
     idArticle: ID!
-    quantite: Int!
+    productionJ: Int!
 }
 
 type Article {
@@ -38,12 +38,14 @@ type Article {
 }
 
 type StockBoutique {
+    idStockBoutique: ID!
     idBoutique: ID!
     idArticle: ID!
     quantite: Int!
 }
 
 type ArticleMap {
+    idArticleMap: ID!
     idArticle: ID!
     quantite: Int!
 }
@@ -56,9 +58,9 @@ type Query {
     getAllCommandesById(idUtilisateur: ID!): [Commande]!
     getAllBoutiques: [Boutique]!
     getAllProduction: [Production]!
-    getArticles: [Article]!
+    getAllArticles: [Article]!
     getArticleById(idArticle: ID!): Article
-    getStockBoutiqueById(idBoutique: ID!): StockBoutique
+    getStockBoutiqueById(idBoutique: ID!): [StockBoutique]
 }
 
 type Mutation {

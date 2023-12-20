@@ -1,9 +1,13 @@
 package com.example.graphql.entities;
 
+
 import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
 public class Boutique {
-
+	@Id
 	private long idBoutique;
 	private String adresse;
 	private long responsableBoutique;

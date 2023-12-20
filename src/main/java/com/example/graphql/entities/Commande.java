@@ -1,9 +1,12 @@
 package com.example.graphql.entities;
 
 import java.util.List;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
 public class Commande {
-
+	@Id
 	private long idCommande;
 	private long idUtilisateur;
 	private List<ArticleMap> articles;

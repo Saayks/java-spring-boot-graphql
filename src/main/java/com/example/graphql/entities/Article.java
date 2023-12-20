@@ -1,7 +1,11 @@
 package com.example.graphql.entities;
 
-public class Article {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
+public class Article {
+	@Id
 	private long idArticle;
 	private String nom;
 	private float prix;

@@ -1,7 +1,11 @@
 package com.example.graphql.entities;
 
-public class Utilisateur {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
+@Entity
+public class Utilisateur {
+	@Id
 	private long idUtilisateur;
 	private String nom;
 	private String prenom;

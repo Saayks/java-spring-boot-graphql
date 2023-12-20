@@ -77,7 +77,7 @@ public class GraphQLController {
  // --------------------------- Article Section -----------------------------------
     
     @QueryMapping
-    public List<Article> getAllArticle() {
+    public List<Article> getAllArticles() {
     	return graphQLService.getAllArticles();
     }
     
@@ -114,8 +114,8 @@ public class GraphQLController {
 
     
     /* Récupération du stock de la boutique */
-    @MutationMapping
-    public StockBoutique getStockBoutiqueById(@Argument("idBoutique") long idBoutique) {
+    @QueryMapping
+    public List<StockBoutique> getStockBoutiqueById(@Argument("idBoutique") long idBoutique) {
     	return graphQLService.getStockBoutique(idBoutique);
     }
     
