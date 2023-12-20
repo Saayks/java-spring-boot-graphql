@@ -154,6 +154,7 @@ public class GraphQLService {
         	//Create new user
             Utilisateur newUtilisateur = new Utilisateur(utilisateurIdCounter.getAndIncrement(), nom, prenom, email, "Client");
             utilisateurs.add(newUtilisateur);
+            utilisateurRepository.save(newUtilisateur);
             return newUtilisateur;
         } else {
             // Email already taken
@@ -171,6 +172,7 @@ public class GraphQLService {
             if(nom != updatedUser.getNom()) { updatedUser.setNom(nom); }
             if(prenom != updatedUser.getPrenom()) {updatedUser.setPrenom(prenom); }
             if(email != updatedUser.getEmail()) {updatedUser.setEmail(email); }
+            utilisateurRepository.save(updatedUser);
             return updatedUser;
         } else {
             // Handle book not found scenario
@@ -185,6 +187,7 @@ public class GraphQLService {
     
         if (userToDelete.isPresent()) {
             utilisateurs.remove(userToDelete.get());
+            utilisateurRepository.delete(userToDelete.get());
             return true;
         } else {
             // Handle book not found scenario
@@ -195,11 +198,13 @@ public class GraphQLService {
     public Commande createCommande(Long userId, List<ArticleMap> articles, float coutTot, String type, int idBoutique) {
     	// Create a new order that is going to be instanced
     	Commande newOrder = new Commande(commandeIdCounter.getAndIncrement(), userId, articles, coutTot, type, idBoutique, "En Préparation");
+    	commandeRepository.save(newOrder);
     	for(ArticleMap articleAChoisir : articles) {
     		var article = this.getArticle(articleAChoisir.getIdArticle());
     		//Mise à jour du stock prévisionnel
     		if(article != null) {
     			article.setStockPrev(article.getStockPrev() - articleAChoisir.getQuantite());
+    			articleRepository.save(article);
     		}
     	}
     	return newOrder;
@@ -212,6 +217,8 @@ public class GraphQLService {
 
         if (commandeToDelete.isPresent()) {
             commandes.remove(commandeToDelete.get());
+            commandeRepository.delete(commandeToDelete.get());
+
             return true;
         } else {
             // La commande n'a pas été trouvée
@@ -227,6 +234,7 @@ public class GraphQLService {
         if (commandeToUpdate.isPresent()) {
             Commande updatedCommande = commandeToUpdate.get();
             updatedCommande.setStatus(newStatus);
+            commandeRepository.save(updatedCommande);
             return updatedCommande;
         } else {
             // La commande n'a pas été trouvée
@@ -255,6 +263,7 @@ public class GraphQLService {
         if (articleToUpdate.isPresent()) {
             Article updatedArticle = articleToUpdate.get();
             updatedArticle.setStock(newStock);
+            articleRepository.save(updatedArticle);
             return true;
         } else {
             // L'article n'a pas été trouvé
@@ -276,6 +285,7 @@ public class GraphQLService {
         if (articleToUpdate.isPresent()) {
             Article updatedArticle = articleToUpdate.get();
             updatedArticle.setStockPrev(newStockPrev);
+            articleRepository.save(updatedArticle);
             return updatedArticle;
         } else {
             // L'article n'a pas été trouvé
