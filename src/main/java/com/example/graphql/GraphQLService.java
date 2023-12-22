@@ -3,6 +3,8 @@ package com.example.graphql;
 import com.example.graphql.model.*;
 import com.example.graphql.repositories.*;
 
+import jakarta.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,6 +99,10 @@ public class GraphQLService {
         productions.add(productionWax); */
     	
     	//Retrieve all data
+    }
+    
+    @PostConstruct
+    public void init() {
     	this.updateDatabase();
     }
     
