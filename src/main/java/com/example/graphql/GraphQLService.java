@@ -1,6 +1,6 @@
 package com.example.graphql;
 
-import com.example.graphql.entities.*;
+import com.example.graphql.model.*;
 import com.example.graphql.repositories.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,23 +31,24 @@ public class GraphQLService {
     private ArticleRepository articleRepository;
 
     @Autowired
-    private StockBoutiqueRepository stockBoutiqueRepository;
-
-    @Autowired
     private ArticleMapRepository articleMapRepository;
+    
+    @Autowired
+    private CommandeArticleMapRepository commandeArticleMapRepository;
     
     private List<Utilisateur> utilisateurs = new ArrayList<>();
     private List<Article> articles = new ArrayList<>();
     private List<Commande> commandes = new ArrayList<>();
     private List<Production> productions = new ArrayList<>();
-    private List<StockBoutique> stocks = new ArrayList<>();
     private List<Boutique> boutiques = new ArrayList<>();
-    private AtomicLong utilisateurIdCounter = new AtomicLong(1);
-    private AtomicLong articleIdCounter = new AtomicLong(1);
-    private AtomicLong commandeIdCounter = new AtomicLong(1);
-    private AtomicLong productionIdCounter = new AtomicLong(1);
-    private AtomicLong boutiqueIdCounter = new AtomicLong(1);
-    private AtomicLong stockBoutiqueIdCounter = new AtomicLong(1);
+    private List<ArticleMap> articlemaps = new ArrayList<>();
+    private List<CommandeArticleMap> commandearticlesmaps = new ArrayList<>();
+    private AtomicInteger utilisateurIdCounter = new AtomicInteger(1);
+    private AtomicInteger articleIdCounter = new AtomicInteger(1);
+    private AtomicInteger commandeIdCounter = new AtomicInteger(1);
+    private AtomicInteger productionIdCounter = new AtomicInteger(1);
+    private AtomicInteger boutiqueIdCounter = new AtomicInteger(1);
+    private AtomicInteger stockBoutiqueIdCounter = new AtomicInteger(1);
 
     
     public GraphQLService() {
@@ -96,14 +97,8 @@ public class GraphQLService {
         productions.add(productionWax); */
     	
     	//Retrieve all data
-    	utilisateurs = utilisateurRepository.findAll();
-    	articles = articleRepository.findAll();
-    	commandes = commandeRepository.findAll();
-    	productions = productionRepository.findAll();
-    	stocks = stockBoutiqueRepository.findAll();
-    	boutiques = boutiqueRepository.findAll();
+    	this.updateDatabase();
     }
-   
     
     public List<Utilisateur> getAllUtilisateurs() {
         return utilisateurs;
@@ -125,17 +120,14 @@ public class GraphQLService {
     }
     
     
-    public List<StockBoutique> getAllStockBoutiques() {
-        return stocks;
-    }
     
     public List<Boutique> getAllBoutiques(){
     	return boutiques;
     }
     
 
-    public Optional<Utilisateur> getUserById(Long id) {
-        return utilisateurs.stream().filter(utilisateur -> utilisateur.getIdUtilisateur() == id).findFirst();
+    public Optional<Utilisateur> getUserById(Integer id) {
+        return utilisateurs.stream().filter(utilisateur -> utilisateur.getIdutilisateur() == id).findFirst();
     }
 
     
@@ -162,9 +154,9 @@ public class GraphQLService {
         }
     }
 
-    public Utilisateur updateUser(Long utilisateurId, String nom, String prenom, String email) {
+    public Utilisateur updateUser(Integer utilisateurId, String nom, String prenom, String email) {
         Optional<Utilisateur> userToUpdate = utilisateurs.stream()
-                .filter(u -> u.getIdUtilisateur() == utilisateurId)
+                .filter(u -> u.getIdutilisateur() == utilisateurId)
                 .findFirst();
     
         if (userToUpdate.isPresent()) {
@@ -180,9 +172,9 @@ public class GraphQLService {
         }
     }
 
-    public Boolean deleteUser(Long id) {
+    public Boolean deleteUser(Integer id) {
         Optional<Utilisateur> userToDelete = utilisateurs.stream()
-                .filter(u -> u.getIdUtilisateur() == id)
+                .filter(u -> u.getIdutilisateur() == id)
                 .findFirst();
     
         if (userToDelete.isPresent()) {
@@ -195,24 +187,27 @@ public class GraphQLService {
         }
     }
     
-    public Commande createCommande(Long userId, List<ArticleMap> articles, float coutTot, String type, int idBoutique) {
+    public Optional<Commande> createCommande(Integer userId, List<ArticleMap> articles, float coutTot, String type, int idBoutique) {
     	// Create a new order that is going to be instanced
-    	Commande newOrder = new Commande(commandeIdCounter.getAndIncrement(), userId, articles, coutTot, type, idBoutique, "En Préparation");
-    	commandeRepository.save(newOrder);
-    	for(ArticleMap articleAChoisir : articles) {
-    		var article = this.getArticle(articleAChoisir.getIdArticle());
-    		//Mise à jour du stock prévisionnel
-    		if(article != null) {
-    			article.setStockPrev(article.getStockPrev() - articleAChoisir.getQuantite());
-    			articleRepository.save(article);
-    		}
-    	}
+//    	Commande newOrder = new Commande(commandeIdCounter.getAndIncrement(), this.getUserById(userId), articles, coutTot, type, "En Préparation");
+//    	commandeRepository.save(newOrder);
+//    	for(ArticleMap articleAChoisir : articles) {
+//    		var article = articleAChoisir.getArticle();
+//    		//Mise à jour du stock prévisionnel
+//    		if(article != null) {
+//    			article.setStockprev(article.getStockprev() - articleAChoisir.getQuantite());
+//    			articleRepository.save(article);
+//    		}
+//    	}
+    	Optional<Commande> newOrder = commandes.stream()
+            .filter(commande -> commande.getIdcommande() == 1)
+            .findFirst();
     	return newOrder;
     }
     
-    public boolean deleteCommande(Long commandeId) {
+    public boolean deleteCommande(Integer commandeId) {
         Optional<Commande> commandeToDelete = commandes.stream()
-                .filter(commande -> commande.getIdCommande() == commandeId)
+                .filter(commande -> commande.getIdcommande() == commandeId)
                 .findFirst();
 
         if (commandeToDelete.isPresent()) {
@@ -226,9 +221,9 @@ public class GraphQLService {
         }
     }
 
-    public Commande updateCommande(Long commandeId, String newStatus) {
+    public Commande updateCommande(Integer commandeId, String newStatus) {
         Optional<Commande> commandeToUpdate = commandes.stream()
-                .filter(commande -> commande.getIdCommande() == commandeId)
+                .filter(commande -> commande.getIdcommande() == commandeId)
                 .findFirst();
 
         if (commandeToUpdate.isPresent()) {
@@ -242,22 +237,29 @@ public class GraphQLService {
         }
     }
     
-    public Article getArticle(Long articleId) {
+    public Article getArticle(Integer integer) {
         return articles.stream()
-                .filter(article -> article.getIdArticle() == articleId)
+                .filter(article -> article.getIdarticle() == integer)
                 .findFirst()
                 .orElse(null);
     }
+   
     
-    public List<Commande> getAllCommandesById(Long userId) {
-        return commandes.stream()
-                .filter(commande -> commande.getIdUtilisateur() == userId)
+    public List<Commande> getAllCommandesById(Integer userId) {
+    	Utilisateur user = this.getUserById(userId).orElse(null);
+    	if(user != null) {
+    		return commandes.stream()
+                .filter(commande -> commande.getUtilisateur() == user)
                 .collect(Collectors.toList());
+    	}
+		else {
+			return null;
+		}
     }
     
-    public boolean updateStock(Long articleId, int newStock) {
+    public boolean updateStock(Integer articleId, int newStock) {
         Optional<Article> articleToUpdate = articles.stream()
-                .filter(article -> article.getIdArticle() == articleId)
+                .filter(article -> article.getIdarticle() == articleId)
                 .findFirst();
 
         if (articleToUpdate.isPresent()) {
@@ -277,14 +279,14 @@ public class GraphQLService {
     }
 
 
-    public Article updateStockPrev(Long articleId, int newStockPrev) {
+    public Article updateStockPrev(Integer articleId, int newStockPrev) {
         Optional<Article> articleToUpdate = articles.stream()
-                .filter(article -> article.getIdArticle() == articleId)
+                .filter(article -> article.getIdarticle() == articleId)
                 .findFirst();
 
         if (articleToUpdate.isPresent()) {
             Article updatedArticle = articleToUpdate.get();
-            updatedArticle.setStockPrev(newStockPrev);
+            updatedArticle.setStockprev(newStockPrev);
             articleRepository.save(updatedArticle);
             return updatedArticle;
         } else {
@@ -292,27 +294,19 @@ public class GraphQLService {
             return null;
         }
     }
-    
-    public List<StockBoutique> getStockBoutique(long boutiqueId) {
-       return stocks.stream()
-               .filter(stock -> stock.getIdBoutique() == boutiqueId)
-               .collect(Collectors.toList());
-
-    }
 
 
-	public Optional<Article> getArticleById(long articleId) {
-        return articles.stream().filter(article -> article.getIdArticle() == articleId).findFirst();
+	public Optional<Article> getArticleById(Integer articleId) {
+        return articles.stream().filter(article -> article.getIdarticle() == articleId).findFirst();
 	}
     
     public void updateDatabase() {
     	//Only to update the database
-    	utilisateurs = utilisateurRepository.findAll();
-    	articles = articleRepository.findAll();
-    	commandes = commandeRepository.findAll();
-    	productions = productionRepository.findAll();
-    	stocks = stockBoutiqueRepository.findAll();
-    	boutiques = boutiqueRepository.findAll();
+    	utilisateurs = this.utilisateurRepository.findAll();
+    	articles = this.articleRepository.findAll();
+    	commandes = this.commandeRepository.findAll();
+    	productions = this.productionRepository.findAll();
+    	boutiques = this.boutiqueRepository.findAll();
     }
 }
 

@@ -1,6 +1,6 @@
 package com.example.graphql;
 
-import com.example.graphql.entities.*;
+import com.example.graphql.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.graphql.data.method.annotation.Argument;
 import org.springframework.graphql.data.method.annotation.MutationMapping;
@@ -22,7 +22,7 @@ public class GraphQLController {
     }
 
     @QueryMapping
-    public Utilisateur getUserById(@Argument("id") Long id) {
+    public Utilisateur getUserById(@Argument("id") Integer id) {
         return graphQLService.getUserById(id).orElse(null);
     }
     
@@ -43,19 +43,19 @@ public class GraphQLController {
     }
     
     @QueryMapping
-    public List<Commande> getAllCommandesById(@Argument("idUtilisateur") long idUtilisateur) {
+    public List<Commande> getAllCommandesById(@Argument("idUtilisateur") Integer idUtilisateur) {
     	return graphQLService.getAllCommandesById(idUtilisateur);
     }
     
     /* Fait pour mettre à jour le statut d'une commande */
     @MutationMapping
-    public Commande updateCommande(@Argument("commandeId") long commandeId, @Argument("newStatus") String newStatus) {
+    public Commande updateCommande(@Argument("commandeId") Integer commandeId, @Argument("newStatus") String newStatus) {
         return graphQLService.updateCommande(commandeId, newStatus);
     }
     
     /* Fait pour supprimer une commande */
     @MutationMapping
-    public boolean deleteCommande(@Argument("commandeId") long commandeId) {
+    public boolean deleteCommande(@Argument("commandeId") Integer commandeId) {
         return graphQLService.deleteCommande(commandeId);
     }
 
@@ -82,19 +82,19 @@ public class GraphQLController {
     }
     
     @QueryMapping
-    public Article getArticleById(@Argument("articleId") long articleId) {
+    public Article getArticleById(@Argument("articleId") Integer articleId) {
     	return graphQLService.getArticleById(articleId).orElse(null);
     }
     
     /* Fait pour mettre à jour le stock d'un article */
     @MutationMapping
-    public boolean updateStock(@Argument("idArticle") long idArticle, @Argument("stock") int stock) {
+    public boolean updateStock(@Argument("idArticle") Integer idArticle, @Argument("stock") int stock) {
         return graphQLService.updateStock(idArticle, stock);
     }
     
     /* Fait pour calculer avec le stock de sécurité si pré-commande */
     @MutationMapping
-    public Article updateStockPrev(@Argument("idArticle") long idArticle, @Argument("stock") int stock) {
+    public Article updateStockPrev(@Argument("idArticle") Integer idArticle, @Argument("stock") int stock) {
     	return graphQLService.updateStockPrev(idArticle, stock);
     }
 
@@ -106,18 +106,10 @@ public class GraphQLController {
     
     /* Fait pour mettre à jour le stock prévisionnel d'un article par son ID */
     @MutationMapping
-    public Article updateStockPrevById(@Argument("articleId") long articleId, @Argument("newStockPrev") int newStockPrev) {
+    public Article updateStockPrevById(@Argument("articleId") Integer articleId, @Argument("newStockPrev") int newStockPrev) {
         return graphQLService.updateStockPrev(articleId, newStockPrev);
     }
 
     // --------------------------- StockBoutique Section (unused, I think)-----------------------------------
-
-    
-    /* Récupération du stock de la boutique */
-    @QueryMapping
-    public List<StockBoutique> getStockBoutiqueById(@Argument("idBoutique") long idBoutique) {
-    	return graphQLService.getStockBoutique(idBoutique);
-    }
-    
     
 }

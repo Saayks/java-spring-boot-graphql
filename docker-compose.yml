@@ -9,8 +9,8 @@ services:
     environment:
       - SPRING_PROFILES_ACTIVE=prod
       - DB_URL=jdbc:postgresql://db:5432/surfwear
-      - DB_USERNAME=user
-      - DB_PASSWORD=user
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=root
     depends_on:
       - db
     network_mode: bridge
@@ -22,8 +22,8 @@ services:
     restart: always
     environment:
       - POSTGRES_DB=surfwear
-      - POSTGRES_USER=admin
-      - POSTGRES_PASSWORD=admin
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=root
     network_mode: bridge
   rabbitmq:
     image: rabbitmq:latest
